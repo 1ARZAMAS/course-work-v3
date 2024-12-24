@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Мой профиль</title>
+</head>
+<body>
+    <div class="auth-buttons">
+        <button class="auth-btn" onclick="window.location.href='index.html'">
+            <span></span>Выход
+        </button>
+    </div>
+
+    <div class="tabs-buttons">
+        <button class="tabs-btn" onclick="window.location.href='home_page.html'">
+            <span></span>Мой профиль
+        </button>
+        <button class="tabs-btn" onclick="window.location.href='test.html'">
+            <span></span>Тестирование
+        </button>
+    </div>
+
+    <!-- Блок с личной информацией -->
+    <div id="tab1Content" class="tab-content active">
+        <div class="profile-box" id="profileBox">
+            <!-- Здесь будет отображаться информация о пользователе -->
+            <p><strong>Имя:</strong> <span id="userName">Загрузка...</span></p>
+            <p><strong>Email:</strong> <span id="userEmail">Загрузка...</span></p>
+            <h3>Пройденные тесты:</h3>
+            <ul id="userTests">
+                <!-- Список тестов будет динамически добавляться сюда -->
+            </ul>
+        </div>
+    </div>
+
+    <!-- Блок с доступными тестами -->
+    <div id="tab2Content" class="tab-content">
+        <h2>Доступные тесты</h2>
+        <ul>
+            <li><strong>Тест по физике</strong> - Краткое описание теста...</li>
+            <li><strong>Тест по химии</strong> - Краткое описание теста...</li>
+            <li><strong>Тест по биологии</strong> - Краткое описание теста...</li>
+        </ul>
+    </div>
+
+    <!-- Футер, который будет внизу страницы -->
+    <footer>
+        2024г. Курсовая работа
+    </footer>
+</body>
+</html>
