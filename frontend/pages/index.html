@@ -5,8 +5,277 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Главная</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            transition: margin-left .5s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Обеспечивает, что контент будет занимать минимум всю высоту экрана */
+        }
+        header {
+            color: royalblue;
+            padding: 10px 0;
+            text-align: center;
+            margin-left: 50px;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -240px;
+            width: 240px;
+            background: #ffffff;
+            height: 100%;
+            box-shadow: 5px 0 30px rgba(0, 0, 0, .1);
+            transition: all .5s ease;
+            z-index: 1000;
+        }
+        .sidebar.active {
+            left: 0;
+        }
+        .sidebar .logo_content .logo {
+            display: flex;
+            color: #0b2997;
+            height: 50px;
+            width: 100%;
+            font-size: 30px;
+            margin-left: 5px;
+            align-items: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: 1.5s ease;
+        }
+        .sidebar.active .logo_content .logo {
+            opacity: 1;
+        }
+        .sidebar .logo_content .logo .logo_name {
+            font-size: 23px;
+            font-weight: 600;
+            margin: 0 10px;
+        }
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 30px;
+            color: #333;
+            cursor: pointer;
+            z-index: 1001;
+            opacity: 1;
+            transition: opacity .3s ease, transform .3s ease;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            margin: 20px 0;
+        }
+        .sidebar ul li a {
+            color: #333;
+            text-decoration: none;
+            font-size: 18px;
+            display: block;
+            padding: 10px;
+            transition: background 0.3s ease;
+        }
+        .sidebar ul li a:hover {
+            background-color: #f0f0f0;
+        }
+        .content {
+            padding: 20px;
+            transition: margin-left .5s ease;
+            flex-grow: 1; /* Это позволяет контенту расширяться и занимать пространство */
+        }
+        section {
+            margin-bottom: 250px;
+            padding: 25px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .menu-toggle.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .menu-toggle.show {
+            opacity: 1;
+            transition: opacity 0.2s ease 0.2s;
+        }
+
+        /* Стили для кнопок Вход и Регистрация с анимацией */
+        .auth-buttons {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-wrap: wrap; /* Позволяет кнопкам переходить на новую строку */
+            gap: 10px;
+            max-width: 500px; /* Ограничение ширины */
+        }
+
+        .auth-btn {
+            border: none;
+            display: block;
+            position: relative;
+            padding: 0.7em 2.4em;
+            font-size: 18px;
+            background: transparent;
+            cursor: pointer;
+            user-select: none;
+            overflow: hidden;
+            color: royalblue;
+            z-index: 1;
+            font-family: inherit;
+            font-weight: 500;
+            border-radius: 30px; /* Закругленные углы */
+            border-bottom: 2px solid royalblue; /* Обводка снизу */
+            min-width: 120px; /* Минимальная ширина кнопки */
+            text-align: center;
+        }
+
+        .auth-btn span {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            z-index: -1;
+            border: 4px solid royalblue;
+            border-radius: 30px; /* Закругленные углы для спана */
+        }
+
+        .auth-btn span::before {
+            content: "";
+            display: block;
+            position: absolute;
+            width: 8%;
+            height: 500%;
+            background: var(--lightgray);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-60deg);
+            transition: all 0.3s;
+        }
+
+        .auth-btn:hover span::before {
+            transform: translate(-50%, -50%) rotate(-90deg);
+            width: 100%;
+            background: royalblue;
+        }
+
+        .auth-btn:hover {
+            color: white;
+        }
+
+        .auth-btn:active span::before {
+            background: #2751cd;
+        }
+
+        /* Медиазапросы для мобильных устройств */
+        @media (max-width: 600px) {
+            .auth-buttons {
+                right: 10px;
+                top: 10px;
+                flex-direction: column; /* Кнопки будут располагаться в столбик */
+                gap: 5px;
+            }
+
+            .auth-btn {
+                width: 100%; /* Кнопки будут растягиваться на всю ширину */
+            }
+        }
+
+        /* Стили для футера */
+        footer {
+            background-color: royalblue;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            width: 100%;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
-    
+    <div class="menu-toggle">☰</div>
+    <div class="auth-buttons">
+        <button class="auth-btn" onclick="window.location.href='login.html'"><span></span>Вход</button>
+        <button class="auth-btn" onclick="window.location.href='registration.html'"><span></span>Регистрация</button>
+    </div>
+
+    <div class="sidebar">
+        <div class="logo_content">
+            <div class="logo">
+                <span class="logo_name">Меню</span>
+            </div>
+        </div>
+        <ul>
+            <li><a href="#home" class="sidebar-link">На главную</a></li>
+            <li><a href="#about" class="sidebar-link">О нас</a></li>
+            <li><a href="#contact" class="sidebar-link">Обратная связь</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <header>
+            <h1>CyberReady: акцент на инфобез</h1>
+        </header>
+
+        <section id="home">
+            <h2>Ща тут шуточки будут</h2>
+            <p>Анекдот 1: Почему программисты не любят гулять по лесу? Потому что там много багов.</p>
+        </section>
+        <section id="about">
+            <h2>Потому что могу</h2>
+            <p>Анекдот 2: Сколько программистов нужно, чтобы заменить лампочку? Ни одного, это аппаратная проблема.</p>
+        </section>
+        <section id="contact">
+            <h2>я ща ебнусь</h2>
+            <p>Анекдот 3: Программисты не устают от работы, они устают от пользователей.</p>
+        </section>
+    </div>
+
+    <!-- Футер, который будет внизу страницы -->
+    <footer>
+        2024г. Курсовая работа
+    </footer>
+
+    <script>
+        const menuToggle = document.querySelector('.menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const body = document.body;
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+
+        menuToggle.addEventListener('click', (event) => {
+            event.stopPropagation();
+            sidebar.classList.toggle('active');
+            body.classList.toggle('active');
+            menuToggle.classList.toggle('hide');
+            menuToggle.classList.remove('show');
+        });
+
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+                body.classList.remove('active');
+                menuToggle.classList.remove('hide');
+                menuToggle.classList.add('show');
+            });
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!sidebar.contains(event.target) && !menuToggle.contains(event.target)) {
+                sidebar.classList.remove('active');
+                body.classList.remove('active');
+                menuToggle.classList.remove('hide');
+                menuToggle.classList.add('show');
+            }
+        });
+    </script>
 </body>
 </html>

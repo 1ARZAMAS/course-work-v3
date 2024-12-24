@@ -5,6 +5,238 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Мой профиль</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Центрируем по горизонтали */
+        }
+
+        header {
+            color: royalblue;
+            padding: 10px 0;
+            text-align: center;
+            /*margin-left: 50px;*/
+        }
+        
+        section {
+            margin-bottom: 250px;
+            padding: 25px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .content {
+            display: flex;
+            flex-direction: column; /* Располагаем элементы в колонку */
+            align-items: center; /* Центрируем по горизонтали */
+            justify-content: flex-start; /* Убираем выравнивание по вертикали */
+            margin-top: 100px; /* Отступ сверху от кнопок */
+            width: 100%; /* Ширина контейнера */
+            min-height: calc(100vh - 60px); /* Чтобы занять весь экран */
+            position: relative;
+        }
+
+        .profile-box {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 20px;
+            width: 80%;
+            max-width: 600px;
+            margin-top: 150px; /* Отступ, чтобы блок был ниже кнопок */
+            position: relative; /* Сохраняем нормальный поток документа */
+            transform: translateY(-50px); /* Точная корректировка */
+        }
+
+        /* Стили для кнопок Вход и Регистрация с анимацией */
+        .auth-buttons {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-wrap: wrap; /* Позволяет кнопкам переходить на новую строку */
+            gap: 10px;
+            max-width: 500px; /* Ограничение ширины */
+            z-index: 1000;
+        }
+
+        .auth-btn {
+            border: none;
+            display: block;
+            position: relative;
+            padding: 0.7em 2.4em;
+            font-size: 18px;
+            background: transparent;
+            cursor: pointer;
+            user-select: none;
+            overflow: hidden;
+            color: royalblue;
+            z-index: 1;
+            font-family: inherit;
+            font-weight: 500;
+            border-radius: 30px; /* Закругленные углы */
+            border-bottom: 2px solid royalblue; /* Обводка снизу */
+            min-width: 120px; /* Минимальная ширина кнопки */
+            text-align: center;
+        }
+
+        .auth-btn span {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            z-index: -1;
+            border: 4px solid royalblue;
+            border-radius: 30px; /* Закругленные углы для спана */
+        }
+
+        .auth-btn span::before {
+            content: "";
+            display: block;
+            position: absolute;
+            width: 8%;
+            height: 500%;
+            background: var(--lightgray);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-60deg);
+            transition: all 0.3s;
+        }
+
+        .auth-btn:hover span::before {
+            transform: translate(-50%, -50%) rotate(-90deg);
+            width: 100%;
+            background: royalblue;
+        }
+
+        .auth-btn:hover {
+            color: white;
+        }
+
+        .auth-btn:active span::before {
+            background: #2751cd;
+        }
+
+        /* Медиазапросы для мобильных устройств */
+        @media (max-width: 600px) {
+            .auth-buttons {
+                right: 10px;
+                top: 10px;
+                flex-direction: column; /* Кнопки будут располагаться в столбик */
+                gap: 5px;
+            }
+
+            .auth-btn {
+                width: 100%; /* Кнопки будут растягиваться на всю ширину */
+            }
+        }
+
+        /*кнопки профиля и тестирования*/
+        .tabs-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center; /* Центрирование по горизонтали */
+            align-items: center; /* Центрирование по вертикали */
+            position: absolute; /* Позволяет позиционировать элемент */
+            top: 20px; /* Расстояние от верхней части страницы */
+            left: 50%; /* Смещаем контейнер на середину страницы */
+            transform: translateX(-50%); /* Центруем контейнер относительно середины */
+            width: 100%; /* Контейнер занимает всю ширину */
+        }
+
+        .tabs-btn {
+            border: none;
+            display: block;
+            position: relative;
+            padding: 0.7em 2.4em;
+            font-size: 18px;
+            background: transparent;
+            cursor: pointer;
+            user-select: none;
+            overflow: hidden;
+            color: royalblue;
+            z-index: 1;
+            font-family: inherit;
+            font-weight: 500;
+            border-radius: 30px; /* Закругленные углы */
+            border-bottom: 2px solid royalblue; /* Обводка снизу */
+            min-width: 120px; /* Минимальная ширина кнопки */
+            text-align: center;
+            position: relative;
+        }
+
+        .tabs-btn span {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            z-index: -1;
+            border: 4px solid royalblue;
+            border-radius: 30px; /* Закругленные углы для спана */
+        }
+
+        .tabs-btn span::before {
+            content: "";
+            display: block;
+            position: absolute;
+            width: 8%;
+            height: 500%;
+            background: var(--lightgray);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-60deg);
+            transition: all 0.3s;
+        }
+
+        .tabs-btn:hover span::before {
+            transform: translate(-50%, -50%) rotate(-90deg);
+            width: 100%;
+            background: royalblue;
+        }
+
+        .tabs-btn:hover {
+            color: white;
+        }
+
+        .tabs-btn:active span::before {
+            background: #2751cd;
+        }
+
+        /* Медиазапросы для мобильных устройств */
+        @media (max-width: 600px) {
+            .tabs-buttons {
+                right: 10px;
+                top: 10px;
+                flex-direction: column; /* Кнопки будут располагаться в столбик */
+                gap: 5px;
+            }
+
+            .tabs-btn {
+                width: 100%; /* Кнопки будут растягиваться на всю ширину */
+            }
+        }
+
+        /* Стили для футера */
+        footer {
+            background-color: royalblue;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            width: 100%;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
     <div class="auth-buttons">
@@ -49,5 +281,61 @@
     <footer>
         2024г. Курсовая работа
     </footer>
+
+    <script>
+        const tab1Btn = document.getElementById('tab1Btn');
+        const tab2Btn = document.getElementById('tab2Btn');
+        const tab1Content = document.getElementById('tab1Content');
+        const tab2Content = document.getElementById('tab2Content');
+
+        tab1Btn.addEventListener('click', () => {
+            tab1Content.classList.add('active');
+            tab2Content.classList.remove('active');
+            tab1Btn.classList.add('active');
+            tab2Btn.classList.remove('active');
+        });
+
+        tab2Btn.addEventListener('click', () => {
+            tab2Content.classList.add('active');
+            tab1Content.classList.remove('active');
+            tab2Btn.classList.add('active');
+            tab1Btn.classList.remove('active');
+        });
+
+        // Логика перехода к профилю и тестированию
+        function goToProfile() {
+            tab1Btn.click();  // Переключаем на вкладку "Мой профиль"
+        }
+
+        function goToTests() {
+            tab2Btn.click();  // Переключаем на вкладку "Тестирование"
+        }
+
+        // Логика получения данных о пользователе с сервера
+        async function loadUserData() {
+            try {
+                const response = await fetch('/api/user'); // Замените на ваш реальный API endpoint
+                const data = await response.json();
+
+                // Заполняем информацию о пользователе
+                document.getElementById('userName').textContent = data.name;
+                document.getElementById('userEmail').textContent = data.email;
+
+                // Заполняем список пройденных тестов
+                const userTests = document.getElementById('userTests');
+                userTests.innerHTML = ''; // Очищаем перед добавлением
+                data.tests.forEach(test => {
+                    const li = document.createElement('li');
+                    li.textContent = '${test.name} - ${test.status}';
+                    userTests.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Ошибка при загрузке данных о пользователе:', error);
+            }
+        }
+
+        // Загружаем данные при загрузке страницы
+        loadUserData();
+    </script>
 </body>
 </html>

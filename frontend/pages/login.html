@@ -5,6 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Вход</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .login-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .login-container label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .login-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: royalblue;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        .login-container button:hover {
+            background-color: rgb(63, 94, 189);
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .back-link a {
+            text-decoration: none;
+            color: #333;
+        }
+        .back-link a:hover {
+            color: #555;
+        }
+    </style>
 </head>
 <body>
     <div class="login-container">
@@ -18,9 +78,33 @@
 
             <button type="submit">Войти</button>
         </form>
+        <script>
+            document.getElementById('login.html').addEventListener('submit', async function (event) {
+                event.preventDefault(); // Остановить стандартное поведение формы
+        
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+        
+                const response = await fetch('/api/users/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                });
+        
+                if (response.ok) {
+                    alert('Login successful!');
+                    window.location.href = '/'; // Перенаправление после успешного входа
+                } else {
+                    alert('Invalid username or password');
+                }
+            });
+        </script>
         <div class="back-link">
             <a href="index.html">Вернуться на главную</a>
         </div>
     </div>
 </body>
 </html>
+
