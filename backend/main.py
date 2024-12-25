@@ -9,7 +9,7 @@ from typing import List
 import logging
 
 from database import SessionLocal, engine
-import models
+import entities
 import schemas
 
 # Настройка логирования
@@ -29,7 +29,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 app = FastAPI()
 
 # Создаём таблицы в базе данных (если их нет)
-models.Base.metadata.create_all(bind=engine)
+entities.Base.metadata.create_all(bind=engine)
 
 # Настройка CORS
 app.add_middleware(
@@ -63,7 +63,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         username: str = payload.get("sub")
         if username is None:
             raise HTTPException(status_code=401, detail="Invalid credentials")
-        user = db.query(models.User).filter(models.User.username == username).first()
+        user = db.query(entities.User).filter(entities.User.username == username).first()
         if user is None:
             raise HTTPException(status_code=401, detail="Invalid credentials")
         return user
@@ -85,19 +85,19 @@ def health_check():
 # Регистрация нового пользователя
 @app.post("/register/", response_model=schemas.UserResponse)
 def register_user(user_data: schemas.UserCreate, db: Session = Depends(get_db)):
-    existing_user = db.query(models.User).filter(models.User.username == user_data.username).first()
+    existing_user = db.query(entities.User).filter(entities.User.username == user_data.username).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Username already registered")
 
     role_name = user_data.role
-    role_obj = db.query(models.Role).filter(models.Role.name == role_name).first()
+    role_obj = db.query(entities.Role).filter(entities.Role.name == role_name).first()
     if not role_obj:
-        role_obj = models.Role(name=role_name)
+        role_obj = entities.Role(name=role_name)
         db.add(role_obj)
         db.flush()
 
     hashed_password = pwd_context.hash(user_data.password)
-    new_user = models.User(
+    new_user = entities.User(
         username=user_data.username,
         hashed_password=hashed_password,
         role_id=role_obj.id
@@ -111,7 +111,7 @@ def register_user(user_data: schemas.UserCreate, db: Session = Depends(get_db)):
 # Логин пользователя
 @app.post("/login/")
 def login_user(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.username == form_data.username).first()
+    user = db.query(entities.User).filter(entities.User.username == form_data.username).first()
     if not user or not pwd_context.verify(form_data.password, user.hashed_password):
         raise HTTPException(status_code=400, detail="Incorrect username or password")
 
@@ -128,7 +128,7 @@ def login_user(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = D
 # Создание нового теста
 @app.post("/tests/", response_model=schemas.TestResponse)
 def create_test(test_data: schemas.TestCreate, db: Session = Depends(get_db)):
-    db_test = models.Test(name=test_data.name, description=test_data.description)
+    db_test = entities.Test(name=test_data.name, description=test_data.description)
     db.add(db_test)
     db.commit()
     db.refresh(db_test)
@@ -137,13 +137,13 @@ def create_test(test_data: schemas.TestCreate, db: Session = Depends(get_db)):
 # Получение всех тестов
 @app.get("/tests/", response_model=List[schemas.TestResponse])
 def get_tests(db: Session = Depends(get_db)):
-    tests = db.query(models.Test).all()
+    tests = db.query(entities.Test).all()
     return tests
 
 # Создание нового вопроса
 @app.post("/questions/", response_model=schemas.QuestionResponse)
 def create_question(question_data: schemas.QuestionCreate, db: Session = Depends(get_db)):
-    db_question = models.Question(text=question_data.text, test_id=question_data.test_id)
+    db_question = entities.Question(text=question_data.text, test_id=question_data.test_id)
     db.add(db_question)
     db.commit()
     db.refresh(db_question)
@@ -152,13 +152,13 @@ def create_question(question_data: schemas.QuestionCreate, db: Session = Depends
 # Получение вопросов по тесту
 @app.get("/tests/{test_id}/questions", response_model=List[schemas.QuestionResponse])
 def get_questions(test_id: int, db: Session = Depends(get_db)):
-    questions = db.query(models.Question).filter(models.Question.test_id == test_id).all()
+    questions = db.query(entities.Question).filter(entities.Question.test_id == test_id).all()
     return questions
 
 # Создание нового ответа на вопрос
 @app.post("/answers/", response_model=schemas.AnswerResponse)
 def create_answer(answer_data: schemas.AnswerCreate, db: Session = Depends(get_db)):
-    db_answer = models.Answer(
+    db_answer = entities.Answer(
         text=answer_data.text, 
         is_correct=answer_data.is_correct, 
         question_id=answer_data.question_id
@@ -171,13 +171,13 @@ def create_answer(answer_data: schemas.AnswerCreate, db: Session = Depends(get_d
 # Получение всех ответов для вопроса
 @app.get("/questions/{question_id}/answers", response_model=List[schemas.AnswerResponse])
 def get_answers(question_id: int, db: Session = Depends(get_db)):
-    answers = db.query(models.Answer).filter(models.Answer.question_id == question_id).all()
+    answers = db.query(entities.Answer).filter(entities.Answer.question_id == question_id).all()
     return answers
 
 # Ответ пользователя на вопрос
 @app.post("/user_answers/", response_model=schemas.UserAnswerResponse)
 def create_user_answer(user_answer_data: schemas.UserAnswerCreate, db: Session = Depends(get_db)):
-    db_user_answer = models.UserAnswer(
+    db_user_answer = entities.UserAnswer(
         user_id=user_answer_data.user_id,
         question_id=user_answer_data.question_id,
         answer_id=user_answer_data.answer_id
