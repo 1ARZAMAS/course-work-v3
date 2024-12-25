@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Регистрация</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .registration-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        .registration-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .registration-container label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .registration-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .registration-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: royalblue;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        .registration-container button:hover {
+            background-color: rgb(63, 94, 189);
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .back-link a {
+            text-decoration: none;
+            color: #333;
+        }
+        .back-link a:hover {
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="registration-container">
+        <h2>Регистрация</h2>
+        <form id="registration-form">
+            <label for="username">Имя пользователя:</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+    
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" required>
+    
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+        <script>
+            document.getElementById('registration-form').addEventListener('submit', async function (event) {
+                event.preventDefault(); // Остановить стандартное поведение формы
+
+                const username = document.getElementById('username').value;
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                try {
+                    const response = await fetch('/register/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ username, email, password })
+                    });
+                    if (response.ok) {
+                        alert('Регистрация прошла успешно!');
+                        //window.location.href = '/pages/login.html'; // Перенаправление на страницу входа
+                    } else {
+                        const error = await response.json();
+                        alert('Ошибка регистрации: ${error.detail}');
+                    }
+                } catch (error) {
+                    console.error('Ошибка:', error);
+                    alert('Произошла ошибка. Попробуйте позже.');
+                }
+            });
+        </script>
+        <button class="back-link" onclick="window.location.href='index.html'"><span></span>Вернуться на главную</button>
+    </div>
+</body>
+</html>

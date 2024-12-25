@@ -7,6 +7,11 @@ from datetime import datetime, timedelta
 from sqlalchemy.orm import Session, joinedload
 from typing import List
 import logging
+from fastapi.staticfiles import StaticFiles
+from starlette.responses import FileResponse
+from fastapi.responses import RedirectResponse
+from starlette.responses import HTMLResponse
+import os
 
 from database import SessionLocal, engine
 import entities
@@ -27,6 +32,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 # Инициализация FastAPI
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="frontend/static/pages/"), name="static")
 
 # Создаём таблицы в базе данных (если их нет)
 entities.Base.metadata.create_all(bind=engine)
@@ -82,43 +89,44 @@ def shutdown_event():
 def health_check():
     return {"status": "ok"}
 
-# Регистрация нового пользователя
 @app.post("/register/", response_model=schemas.UserResponse)
 def register_user(user_data: schemas.UserCreate, db: Session = Depends(get_db)):
     existing_user = db.query(entities.User).filter(entities.User.username == user_data.username).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Username already registered")
 
-    role_name = user_data.role
+    role_name = user_data.role if user_data.role else "user"  # Роль по умолчанию
     role_obj = db.query(entities.Role).filter(entities.Role.name == role_name).first()
     if not role_obj:
         role_obj = entities.Role(name=role_name)
         db.add(role_obj)
-        db.flush()
+        db.commit()
+        db.refresh(role_obj)
 
-    hashed_password = pwd_context.hash(user_data.password)
+    hashed_password = pwd_context.hash(user_data.password)  # Хешируем пароль
     new_user = entities.User(
         username=user_data.username,
+        email=user_data.email,
         hashed_password=hashed_password,
         role_id=role_obj.id
     )
+
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
 
-    return new_user
+    return RedirectResponse(url="/static/pages/login.html", status_code=303)
 
-# Логин пользователя
 @app.post("/login/")
 def login_user(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = db.query(entities.User).filter(entities.User.username == form_data.username).first()
-    if not user or not pwd_context.verify(form_data.password, user.hashed_password):
+    if not user or not pwd_context.verify(form_data.password, user.hashed_password):  # Верификация пароля
         raise HTTPException(status_code=400, detail="Incorrect username or password")
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(data={"sub": user.username}, expires_delta=access_token_expires)
 
-    role_name = user.role_rel.name if user.role_rel else None
+    role_name = user.role.name if user.role else None
     return {
         "access_token": access_token,
         "token_type": "bearer",

@@ -74,8 +74,9 @@ class UserAnswerResponse(BaseModel):
 
 class UserCreate(BaseModel):
     username: str
+    email: str
     password: str
-    role: str  # Роль пользователя приходит строкой
+    role: str = "user"  # Роль пользователя приходит строкой
 
 class UserResponse(BaseModel):
     id: int
